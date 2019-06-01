@@ -1,6 +1,7 @@
+import 'package:chat_app/presentation/features/login_module/login_page.dart';
 import 'package:flutter/material.dart';
 
-import 'home.dart';
+import 'package:chat_app/presentation/commons/const.dart';
 
 class MyApp extends StatelessWidget{
   @override
@@ -9,9 +10,9 @@ class MyApp extends StatelessWidget{
     return MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
-          primarySwatch: Colors.blue,
+          primaryColor: themeColor,
         ),
-       home: HomePage());
+       home: LoginPage(title: "Universal Chat App",));
        // home: ChangeNotifierProvider<ConversationNotifier>(
         //  builder: (_) => ConversationNotifier(injector.get<GetConversationListUseCase>()),
         //  child: HomePage(),
