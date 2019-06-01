@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
-import 'package:chat_app/firebase_vision_helper.dart';
+
+import 'firebase_vision_helper.dart';
 
 class LanguageTranslatorPage extends StatefulWidget {
   @override

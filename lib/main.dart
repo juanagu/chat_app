@@ -1,18 +1,18 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:chat_app/firebase_vision_helper.dart';
-import 'package:chat_app/language_translator_page.dart';
 
 import 'detector_painters.dart';
+import 'firebase_vision_helper.dart';
+import 'language_translator_page.dart';
 
 void main() => runApp(MaterialApp(
       home: HomePage(),
       routes: <String, WidgetBuilder>{
-        '/languagetranslator': (BuildContext context) => LanguageTranslatorPage(),
+        '/languagetranslator': (BuildContext context) =>
+            LanguageTranslatorPage(),
       },
     ));
 
@@ -70,7 +70,8 @@ class HomeState extends State<HomePage> {
       _scanResults = null;
     });
 
-    dynamic results = await FirebaseVisionHelper.detector(file, _currentDetector);
+    dynamic results =
+        await FirebaseVisionHelper.detector(file, _currentDetector);
 
     setState(() {
       _scanResults = results;
@@ -109,9 +110,7 @@ class HomeState extends State<HomePage> {
     return Container(
       constraints: const BoxConstraints.expand(),
       decoration: BoxDecoration(
-        image: DecorationImage(
-          image: Image.file(_imageFile).image
-        ),
+        image: DecorationImage(image: Image.file(_imageFile).image),
       ),
       child: _imageSize == null || _scanResults == null
           ? const Center(

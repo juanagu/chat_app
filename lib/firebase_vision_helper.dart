@@ -1,8 +1,9 @@
 import 'dart:io';
 
-import 'package:chat_app/detector_painters.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:firebase_mlkit_language/firebase_mlkit_language.dart';
+
+import 'detector_painters.dart';
 
 abstract class FirebaseVisionHelper {
   static FirebaseVisionImage getVisionImageFromFile(File file) {
@@ -45,15 +46,13 @@ abstract class FirebaseVisionHelper {
         await instance.languageIdentifier().processText(text);
     var fromLanguage = languages.first.languageCode.toString();
 
-    await instance.modelManager()
-        .downloadModel(fromLanguage);
-    await instance.modelManager()
-        .downloadModel(SupportedLanguages.Spanish);
+    await instance.modelManager().downloadModel(fromLanguage);
+    await instance.modelManager().downloadModel(SupportedLanguages.Spanish);
 
-    final languageTranslator =  instance
-        .languageTranslator(fromLanguage, SupportedLanguages.Spanish);
+    final languageTranslator =
+        instance.languageTranslator(fromLanguage, SupportedLanguages.Spanish);
 
-        return await languageTranslator.processText(text);
+    return await languageTranslator.processText(text);
   }
 
   static Future<dynamic> detector(File file, Detector detector) async {
