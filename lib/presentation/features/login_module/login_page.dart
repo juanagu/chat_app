@@ -129,7 +129,7 @@ class LoginPageState extends State<LoginPage> {
         appBar: AppBar(
           title: Text(
             widget.title,
-            style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w300),
           ),
           centerTitle: true,
         ),
@@ -142,8 +142,8 @@ class LoginPageState extends State<LoginPage> {
                     'SIGN IN WITH GOOGLE',
                     style: TextStyle(fontSize: 16.0),
                   ),
-                  color: Color(0xffdd4b39),
-                  highlightColor: Color(0xffff7f7f),
+                  color: themeColor,
+                  highlightColor: themeColor,
                   splashColor: Colors.transparent,
                   textColor: Colors.white,
                   padding: EdgeInsets.fromLTRB(30.0, 15.0, 30.0, 15.0)),
