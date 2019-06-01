@@ -1,7 +1,6 @@
+import 'package:chat_app/presentation/features/login_module/login_page.dart';
 import 'package:flutter/material.dart';
-import 'package:tech_talk_ml_kit/presentation/features/login_module/login_page.dart';
-
-import 'features/chat_list_module/chat_list_page.dart';
+import 'package:chat_app/presentation/commons/const.dart';
 
 class MyApp extends StatelessWidget {
   @override
@@ -11,9 +10,11 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         theme: ThemeData(
-          primarySwatch: Colors.blue,
+          primaryColor: themeColor,
         ),
-        home: ChatListPage());
+        home: LoginPage(
+          title: "Universal Chat App",
+        ));
     // home: ChangeNotifierProvider<ConversationNotifier>(
     //  builder: (_) => ConversationNotifier(injector.get<GetConversationListUseCase>()),
     //  child: HomePage(),

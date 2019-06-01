@@ -1,94 +1,168 @@
+import 'dart:async';
+
+import 'package:chat_app/presentation/features/home_module/main_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:chat_app/presentation/commons/const.dart';
 
-class LoginPage extends StatelessWidget {
-  Widget _showEmailInput() {
-    return new TextFormField(
-      maxLines: 1,
-      keyboardType: TextInputType.emailAddress,
-      autofocus: false,
-      decoration: new InputDecoration(
-          hintText: 'Email',
-          icon: new Icon(
-            Icons.mail,
-            color: Colors.grey,
-          )),
-      validator: (value) => value.isEmpty ? 'Email can\'t be empty' : null,
+class LoginPage extends StatefulWidget {
+  LoginPage({Key key, this.title}) : super(key: key);
+
+  final String title;
+
+  @override
+  LoginPageState createState() => LoginPageState();
+}
+
+class LoginPageState extends State<LoginPage> {
+  final GoogleSignIn googleSignIn = GoogleSignIn();
+  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  SharedPreferences prefs;
+
+  bool isLoading = false;
+  bool isLoggedIn = false;
+  FirebaseUser currentUser;
+
+  @override
+  void initState() {
+    super.initState();
+    isSignedIn();
+  }
+
+  void isSignedIn() async {
+    this.setState(() {
+      isLoading = true;
+    });
+
+    prefs = await SharedPreferences.getInstance();
+
+    isLoggedIn = await googleSignIn.isSignedIn();
+    if (isLoggedIn) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                MainPage(currentUserId: prefs.getString('id'))),
+      );
+    }
+
+    this.setState(() {
+      isLoading = false;
+    });
+  }
+
+  Future<Null> handleSignIn() async {
+    prefs = await SharedPreferences.getInstance();
+
+    this.setState(() {
+      isLoading = true;
+    });
+
+    GoogleSignInAccount googleUser = await googleSignIn.signIn();
+    GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+    final AuthCredential credential = GoogleAuthProvider.getCredential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
     );
-  }
 
-  Widget _showPasswordInput() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(0.0, 16.0, 0.0, 0.0),
-      child: new TextFormField(
-        maxLines: 1,
-        obscureText: true,
-        autofocus: false,
-        decoration: new InputDecoration(
-            hintText: 'Password',
-            icon: new Icon(
-              Icons.lock,
-              color: Colors.grey,
-            )),
-        validator: (value) => value.isEmpty ? 'Password can\'t be empty' : null,
-      ),
-    );
-  }
+    FirebaseUser firebaseUser =
+        await firebaseAuth.signInWithCredential(credential);
 
-  Widget _showPrimaryButton() {
-    return new Padding(
-        padding: EdgeInsets.fromLTRB(0.0, 32.0, 0.0, 16.0),
-        child: new MaterialButton(
-          elevation: 5.0,
-          minWidth: 200.0,
-          height: 42.0,
-          color: Colors.blue,
-          child: new Text('Ingresar',
-              style: new TextStyle(fontSize: 20.0, color: Colors.white)),
-          onPressed: _validateAndSubmit,
-        ));
-  }
+    if (firebaseUser != null) {
+      // Check is already sign up
+      final QuerySnapshot result = await Firestore.instance
+          .collection('users')
+          .where('id', isEqualTo: firebaseUser.uid)
+          .getDocuments();
+      final List<DocumentSnapshot> documents = result.documents;
+      if (documents.length == 0) {
+        // Update data to server if new user
+        Firestore.instance
+            .collection('users')
+            .document(firebaseUser.uid)
+            .setData({
+          'nickname': firebaseUser.displayName,
+          'photoUrl': firebaseUser.photoUrl,
+          'id': firebaseUser.uid
+        });
 
-  Widget _showGoogleButton() {
-    return new Padding(
-        padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 16.0),
-        child: new MaterialButton(
-          elevation: 5.0,
-          minWidth: 200.0,
-          height: 42.0,
-          color: Colors.red,
-          child: new Text('Ingresar con Google',
-              style: new TextStyle(fontSize: 20.0, color: Colors.white)),
-          onPressed: _validateAndSubmit,
-        ));
-  }
+        // Write data to local
+        currentUser = firebaseUser;
+        await prefs.setString('id', currentUser.uid);
+        await prefs.setString('nickname', currentUser.displayName);
+        await prefs.setString('photoUrl', currentUser.photoUrl);
+      } else {
+        // Write data to local
+        await prefs.setString('id', documents[0]['id']);
+        await prefs.setString('nickname', documents[0]['nickname']);
+        await prefs.setString('photoUrl', documents[0]['photoUrl']);
+        await prefs.setString('aboutMe', documents[0]['aboutMe']);
+      }
+      Fluttertoast.showToast(msg: "Sign in success");
+      this.setState(() {
+        isLoading = false;
+      });
 
-  Widget _showForm() {
-    return new Form(
-      child: new ListView(
-        shrinkWrap: true,
-        children: <Widget>[
-          _showEmailInput(),
-          _showPasswordInput(),
-          _showPrimaryButton(),
-          _showGoogleButton(),
-        ],
-      ),
-    );
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => MainPage(
+                  currentUserId: firebaseUser.uid,
+                )),
+      );
+    } else {
+      Fluttertoast.showToast(msg: "Sign in fail");
+      this.setState(() {
+        isLoading = false;
+      });
+    }
   }
-
-  Widget _showBody() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32.0),
-        child: new Container(padding: EdgeInsets.all(32.0), child: _showForm()),
-      ),
-    );
-  }
-
-  _validateAndSubmit() {}
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: _showBody());
+    return Scaffold(
+        appBar: AppBar(
+          title: Text(
+            widget.title,
+            style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
+          ),
+          centerTitle: true,
+        ),
+        body: Stack(
+          children: <Widget>[
+            Center(
+              child: FlatButton(
+                  onPressed: handleSignIn,
+                  child: Text(
+                    'SIGN IN WITH GOOGLE',
+                    style: TextStyle(fontSize: 16.0),
+                  ),
+                  color: Color(0xffdd4b39),
+                  highlightColor: Color(0xffff7f7f),
+                  splashColor: Colors.transparent,
+                  textColor: Colors.white,
+                  padding: EdgeInsets.fromLTRB(30.0, 15.0, 30.0, 15.0)),
+            ),
+
+            // Loading
+            Positioned(
+              child: isLoading
+                  ? Container(
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(themeColor),
+                        ),
+                      ),
+                      color: Colors.white.withOpacity(0.8),
+                    )
+                  : Container(),
+            ),
+          ],
+        ));
   }
 }
