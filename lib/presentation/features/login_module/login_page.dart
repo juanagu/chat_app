@@ -44,7 +44,9 @@ class LoginPageState extends State<LoginPage> {
     if (isLoggedIn) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => MainPage(currentUserId: prefs.getString('id'))),
+        MaterialPageRoute(
+            builder: (context) =>
+                MainPage(currentUserId: prefs.getString('id'))),
       );
     }
 
@@ -68,19 +70,26 @@ class LoginPageState extends State<LoginPage> {
       idToken: googleAuth.idToken,
     );
 
-    FirebaseUser firebaseUser = await firebaseAuth.signInWithCredential(credential);
+    FirebaseUser firebaseUser =
+        await firebaseAuth.signInWithCredential(credential);
 
     if (firebaseUser != null) {
       // Check is already sign up
-      final QuerySnapshot result =
-      await Firestore.instance.collection('users').where('id', isEqualTo: firebaseUser.uid).getDocuments();
+      final QuerySnapshot result = await Firestore.instance
+          .collection('users')
+          .where('id', isEqualTo: firebaseUser.uid)
+          .getDocuments();
       final List<DocumentSnapshot> documents = result.documents;
       if (documents.length == 0) {
         // Update data to server if new user
         Firestore.instance
             .collection('users')
             .document(firebaseUser.uid)
-            .setData({'nickname': firebaseUser.displayName, 'photoUrl': firebaseUser.photoUrl, 'id': firebaseUser.uid});
+            .setData({
+          'nickname': firebaseUser.displayName,
+          'photoUrl': firebaseUser.photoUrl,
+          'id': firebaseUser.uid
+        });
 
         // Write data to local
         currentUser = firebaseUser;
@@ -103,8 +112,8 @@ class LoginPageState extends State<LoginPage> {
         context,
         MaterialPageRoute(
             builder: (context) => MainPage(
-              currentUserId: firebaseUser.uid,
-            )),
+                  currentUserId: firebaseUser.uid,
+                )),
       );
     } else {
       Fluttertoast.showToast(msg: "Sign in fail");
@@ -120,7 +129,7 @@ class LoginPageState extends State<LoginPage> {
         appBar: AppBar(
           title: Text(
             widget.title,
-            style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w300),
           ),
           centerTitle: true,
         ),
@@ -133,8 +142,8 @@ class LoginPageState extends State<LoginPage> {
                     'SIGN IN WITH GOOGLE',
                     style: TextStyle(fontSize: 16.0),
                   ),
-                  color: Color(0xffdd4b39),
-                  highlightColor: Color(0xffff7f7f),
+                  color: themeColor,
+                  highlightColor: themeColor,
                   splashColor: Colors.transparent,
                   textColor: Colors.white,
                   padding: EdgeInsets.fromLTRB(30.0, 15.0, 30.0, 15.0)),
@@ -144,13 +153,13 @@ class LoginPageState extends State<LoginPage> {
             Positioned(
               child: isLoading
                   ? Container(
-                child: Center(
-                  child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(themeColor),
-                  ),
-                ),
-                color: Colors.white.withOpacity(0.8),
-              )
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(themeColor),
+                        ),
+                      ),
+                      color: Colors.white.withOpacity(0.8),
+                    )
                   : Container(),
             ),
           ],
