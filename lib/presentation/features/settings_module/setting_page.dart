@@ -385,8 +385,14 @@ class SettingsScreenState extends State<SettingsScreen> {
         changeToFirst: true,
         textAlign: TextAlign.left,
         columnPadding: const EdgeInsets.all(8.0),
-        onConfirm: (Picker picker, List value) async{
+        onConfirm: (Picker picker, List value) async {
+          setState(() {
+            isLoading = true;
+          });
           await changeLanguage(picker.getSelectedValues().first);
+          setState(() {
+            isLoading = false;
+          });
         });
     picker.show(this.scaffoldKey.currentState);
   }

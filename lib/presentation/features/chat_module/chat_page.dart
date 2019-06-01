@@ -645,7 +645,8 @@ class ChatScreenState extends State<ChatScreen> {
                   .orderBy('timestamp', descending: true)
                   .limit(20)
                   .snapshots()
-                  .asyncMap((snap) => MessageProvider.mapFromFirebase(snap)),
+                  .asyncMap(
+                      (snap) => MessageProvider.mapFromFirebase(snap, id)),
               builder: (context, snapshot) {
                 if (snapshot.data == null || snapshot.data.isEmpty) {
                   return Center(
