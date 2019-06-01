@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chat_app/presentation/commons/language_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -9,32 +10,41 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:chat_app/presentation/commons/const.dart';
+import 'package:flutter_picker/flutter_picker.dart';
+import 'package:firebase_mlkit_language/firebase_mlkit_language.dart';
 
 class SettingPage extends StatelessWidget {
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
+      key: scaffoldKey,
       appBar: new AppBar(
         title: new Text(
-          'SETTINGS',
+          'Perfil',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.w300),
         ),
         centerTitle: true,
       ),
-      body: new SettingsScreen(),
+      body: new SettingsScreen(scaffoldKey),
     );
   }
 }
 
 class SettingsScreen extends StatefulWidget {
+  GlobalKey<ScaffoldState> scaffoldKey;
+
+  SettingsScreen(this.scaffoldKey);
+
   @override
-  State createState() => new SettingsScreenState();
+  State createState() => new SettingsScreenState(scaffoldKey);
 }
 
 class SettingsScreenState extends State<SettingsScreen> {
   TextEditingController controllerNickname;
   TextEditingController controllerAboutMe;
-
+  GlobalKey<ScaffoldState> scaffoldKey;
   SharedPreferences prefs;
 
   String id = '';
@@ -47,6 +57,8 @@ class SettingsScreenState extends State<SettingsScreen> {
 
   final FocusNode focusNodeNickname = new FocusNode();
   final FocusNode focusNodeAboutMe = new FocusNode();
+
+  SettingsScreenState(this.scaffoldKey);
 
   @override
   void initState() {
@@ -309,7 +321,23 @@ class SettingsScreenState extends State<SettingsScreen> {
                   textColor: Colors.white,
                   padding: EdgeInsets.fromLTRB(30.0, 10.0, 30.0, 10.0),
                 ),
-                margin: EdgeInsets.only(top: 50.0, bottom: 50.0),
+                margin: EdgeInsets.only(top: 50.0),
+              ),
+
+              Container(
+                child: FlatButton(
+                  onPressed: () => openLanguages(context),
+                  child: Text(
+                    'LANGUAGE',
+                    style: TextStyle(fontSize: 16.0),
+                  ),
+                  color: primaryColor,
+                  highlightColor: new Color(0xff8d93a0),
+                  splashColor: Colors.transparent,
+                  textColor: Colors.white,
+                  padding: EdgeInsets.fromLTRB(30.0, 10.0, 30.0, 10.0),
+                ),
+                margin: EdgeInsets.only(top: 10.0, bottom: 50.0),
               ),
             ],
           ),
@@ -330,5 +358,40 @@ class SettingsScreenState extends State<SettingsScreen> {
         ),
       ],
     );
+  }
+
+  void openLanguages(BuildContext context) {
+    Picker picker = new Picker(
+        adapter: PickerDataAdapter(data: [
+          new PickerItem(
+              text: Text("Español", style: TextStyle(fontSize: 16.0)),
+              value: SupportedLanguages.Spanish),
+          new PickerItem(
+              text: Text(
+                "English",
+                style: TextStyle(fontSize: 16.0),
+              ),
+              value: SupportedLanguages.English),
+          new PickerItem(
+              text: Text(
+                "Portuguese",
+                style: TextStyle(fontSize: 16.0),
+              ),
+              value: SupportedLanguages.Portuguese),
+          new PickerItem(
+              text: Text("Russian", style: TextStyle(fontSize: 16.0)),
+              value: SupportedLanguages.Russian),
+        ]),
+        changeToFirst: true,
+        textAlign: TextAlign.left,
+        columnPadding: const EdgeInsets.all(8.0),
+        onConfirm: (Picker picker, List value) async{
+          await changeLanguage(picker.getSelectedValues().first);
+        });
+    picker.show(this.scaffoldKey.currentState);
+  }
+
+  Future<void> changeLanguage(String language) async {
+    await LanguageUtils.saveLanguage(language);
   }
 }

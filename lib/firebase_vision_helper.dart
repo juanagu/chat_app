@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:chat_app/presentation/commons/language_utils.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:firebase_mlkit_language/firebase_mlkit_language.dart';
 
@@ -42,13 +43,14 @@ abstract class FirebaseVisionHelper {
     var instance = FirebaseLanguage.instance;
     List<LanguageLabel> languages =
         await instance.languageIdentifier().processText(text);
+
     var fromLanguage = languages.first.languageCode.toString();
+    var toLanguage = await LanguageUtils.getLanguage();
 
     await instance.modelManager().downloadModel(fromLanguage);
-    await instance.modelManager().downloadModel(SupportedLanguages.Spanish);
 
     final languageTranslator =
-        instance.languageTranslator(fromLanguage, SupportedLanguages.Spanish);
+        instance.languageTranslator(fromLanguage, toLanguage);
 
     return await languageTranslator.processText(text);
   }
