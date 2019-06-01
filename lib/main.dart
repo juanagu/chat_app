@@ -4,8 +4,8 @@ import 'dart:io';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:tech_talk_ml_kit/firebase_vision_helper.dart';
-import 'package:tech_talk_ml_kit/language_translator_page.dart';
+import 'package:chat_app/firebase_vision_helper.dart';
+import 'package:chat_app/language_translator_page.dart';
 
 import 'detector_painters.dart';
 
