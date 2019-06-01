@@ -2,7 +2,9 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chat_app/domain/models/message_model.dart';
 import 'package:chat_app/presentation/commons/const.dart';
+import 'package:chat_app/presentation/notifiers/message_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -52,7 +54,7 @@ class ChatScreenState extends State<ChatScreen> {
   String peerAvatar;
   String id;
 
-  var listMessage;
+  List<MessageModel> listMessage;
   String groupChatId;
   SharedPreferences prefs;
 
@@ -167,16 +169,16 @@ class ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  Widget buildItem(int index, DocumentSnapshot document) {
-    if (document['idFrom'] == id) {
+  Widget buildItem(int index, MessageModel message) {
+    if (message.idFrom == id) {
       // Right (my message)
       return Row(
         children: <Widget>[
-          document['type'] == 0
+          message.type == 0
           // Text
               ? Container(
             child: Text(
-              document['content'],
+              message.message,
               style: TextStyle(color: primaryColor),
             ),
             padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
@@ -184,7 +186,7 @@ class ChatScreenState extends State<ChatScreen> {
             decoration: BoxDecoration(color: greyColor2, borderRadius: BorderRadius.circular(8.0)),
             margin: EdgeInsets.only(bottom: isLastMessageRight(index) ? 20.0 : 10.0, right: 10.0),
           )
-              : document['type'] == 1
+              : message.type == 1
           // Image
               ? Container(
             child: Material(
@@ -215,7 +217,7 @@ class ChatScreenState extends State<ChatScreen> {
                   ),
                   clipBehavior: Clip.hardEdge,
                 ),
-                imageUrl: document['content'],
+                imageUrl: message.message,
                 width: 200.0,
                 height: 200.0,
                 fit: BoxFit.cover,
@@ -228,7 +230,7 @@ class ChatScreenState extends State<ChatScreen> {
           // Sticker
               : Container(
             child: new Image.asset(
-              'images/${document['content']}.gif',
+              'images/${message.message}.gif',
               width: 100.0,
               height: 100.0,
               fit: BoxFit.cover,
@@ -268,10 +270,10 @@ class ChatScreenState extends State<ChatScreen> {
                   clipBehavior: Clip.hardEdge,
                 )
                     : Container(width: 35.0),
-                document['type'] == 0
+                message.type == 0
                     ? Container(
                   child: Text(
-                    document['content'],
+                    message.message,
                     style: TextStyle(color: Colors.white),
                   ),
                   padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
@@ -279,7 +281,7 @@ class ChatScreenState extends State<ChatScreen> {
                   decoration: BoxDecoration(color: primaryColor, borderRadius: BorderRadius.circular(8.0)),
                   margin: EdgeInsets.only(left: 10.0),
                 )
-                    : document['type'] == 1
+                    : message.type == 1
                     ? Container(
                   child: Material(
                     child: CachedNetworkImage(
@@ -309,7 +311,7 @@ class ChatScreenState extends State<ChatScreen> {
                         ),
                         clipBehavior: Clip.hardEdge,
                       ),
-                      imageUrl: document['content'],
+                      imageUrl: message.message,
                       width: 200.0,
                       height: 200.0,
                       fit: BoxFit.cover,
@@ -321,7 +323,7 @@ class ChatScreenState extends State<ChatScreen> {
                 )
                     : Container(
                   child: new Image.asset(
-                    'images/${document['content']}.gif',
+                    'images/${message.message}.gif',
                     width: 100.0,
                     height: 100.0,
                     fit: BoxFit.cover,
@@ -336,7 +338,7 @@ class ChatScreenState extends State<ChatScreen> {
                 ? Container(
               child: Text(
                 DateFormat('dd MMM kk:mm')
-                    .format(DateTime.fromMillisecondsSinceEpoch(int.parse(document['timestamp']))),
+                    .format(DateTime.fromMillisecondsSinceEpoch(int.parse(message.timestamp))),
                 style: TextStyle(color: greyColor, fontSize: 12.0, fontStyle: FontStyle.italic),
               ),
               margin: EdgeInsets.only(left: 50.0, top: 5.0, bottom: 5.0),
@@ -351,7 +353,7 @@ class ChatScreenState extends State<ChatScreen> {
   }
 
   bool isLastMessageLeft(int index) {
-    if ((index > 0 && listMessage != null && listMessage[index - 1]['idFrom'] == id) || index == 0) {
+    if ((index > 0 && listMessage != null && listMessage.last.idFrom == id) || index == 0) {
       return true;
     } else {
       return false;
@@ -359,7 +361,7 @@ class ChatScreenState extends State<ChatScreen> {
   }
 
   bool isLastMessageRight(int index) {
-    if ((index > 0 && listMessage != null && listMessage[index - 1]['idFrom'] != id) || index == 0) {
+    if ((index > 0 && listMessage != null && listMessage.last.idFrom != id) || index == 0) {
       return true;
     } else {
       return false;
@@ -595,24 +597,25 @@ class ChatScreenState extends State<ChatScreen> {
     return Flexible(
       child: groupChatId == ''
           ? Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(themeColor)))
-          : StreamBuilder(
+          : StreamBuilder<List<MessageModel>>(
         stream: Firestore.instance
             .collection('messages')
             .document(groupChatId)
             .collection(groupChatId)
             .orderBy('timestamp', descending: true)
             .limit(20)
-            .snapshots(),
+            .snapshots()
+            .asyncMap((snap) => MessageProvider.mapFromFirebase(snap)),
         builder: (context, snapshot) {
-          if (!snapshot.hasData) {
+          if (snapshot.data == null || snapshot.data.isEmpty) {
             return Center(
                 child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(themeColor)));
           } else {
-            listMessage = snapshot.data.documents;
+            listMessage = snapshot.data;
             return ListView.builder(
               padding: EdgeInsets.all(10.0),
-              itemBuilder: (context, index) => buildItem(index, snapshot.data.documents[index]),
-              itemCount: snapshot.data.documents.length,
+              itemBuilder: (context, index) => buildItem(index, snapshot.data[index]),
+              itemCount: snapshot.data.length,
               reverse: true,
               controller: listScrollController,
             );
