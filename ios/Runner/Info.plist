@@ -47,5 +47,20 @@
     <string>Microphone library permission</string>
     <key>NSCameraUsageDescription</key>
     <string>Camera library permission</string>
+		<!-- Google Sign-in Section -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<!-- TODO Replace this value: -->
+				<!-- Copied from GoogleService-Info.plist key REVERSED_CLIENT_ID -->
+				<string>com.googleusercontent.apps.94390138567-m9g835v3a3ojhp0psn9bp1r57oem858v</string>
+			</array>
+		</dict>
+	</array>
+	<!-- End of the Google Sign-in Section -->
 </dict>
 </plist>
