@@ -42,7 +42,21 @@ class LoginPage extends StatelessWidget {
           minWidth: 200.0,
           height: 42.0,
           color: Colors.blue,
-          child: new Text('Login',
+          child: new Text('Ingresar',
+              style: new TextStyle(fontSize: 20.0, color: Colors.white)),
+          onPressed: _validateAndSubmit,
+        ));
+  }
+
+  Widget _showGoogleButton() {
+    return new Padding(
+        padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 16.0),
+        child: new MaterialButton(
+          elevation: 5.0,
+          minWidth: 200.0,
+          height: 42.0,
+          color: Colors.red,
+          child: new Text('Ingresar con Google',
               style: new TextStyle(fontSize: 20.0, color: Colors.white)),
           onPressed: _validateAndSubmit,
         ));
@@ -56,6 +70,7 @@ class LoginPage extends StatelessWidget {
           _showEmailInput(),
           _showPasswordInput(),
           _showPrimaryButton(),
+          _showGoogleButton(),
         ],
       ),
     );
