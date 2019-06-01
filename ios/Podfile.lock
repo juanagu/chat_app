@@ -156,6 +156,8 @@ PODS:
     - FirebaseCore (~> 6.0)
     - GTMSessionFetcher/Core (~> 1.1)
   - Flutter (1.0.0)
+  - flutter_picker (0.0.1):
+    - Flutter
   - fluttertoast (0.0.2):
     - Flutter
   - FMDB (2.7.5):
@@ -272,6 +274,7 @@ DEPENDENCIES:
   - firebase_mlkit_language (from `.symlinks/plugins/firebase_mlkit_language/ios`)
   - firebase_storage (from `.symlinks/plugins/firebase_storage/ios`)
   - Flutter (from `.symlinks/flutter/ios`)
+  - flutter_picker (from `.symlinks/plugins/flutter_picker/ios`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - google_sign_in (from `.symlinks/plugins/google_sign_in/ios`)
   - image_picker (from `.symlinks/plugins/image_picker/ios`)
@@ -330,6 +333,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_storage/ios"
   Flutter:
     :path: ".symlinks/flutter/ios"
+  flutter_picker:
+    :path: ".symlinks/plugins/flutter_picker/ios"
   fluttertoast:
     :path: ".symlinks/plugins/fluttertoast/ios"
   google_sign_in:
@@ -371,6 +376,7 @@ SPEC CHECKSUMS:
   FirebaseRemoteConfig: 40f75c6ea20a52bf65ef44e3898910dd5b57c532
   FirebaseStorage: 926d41552072b9fee67aa645760f05f87b7ce604
   Flutter: 58dd7d1b27887414a370fcccb9e645c08ffd7a6a
+  flutter_picker: 8ff0d7440b4e8327fcc9e6b21a39ef9369e697c7
   fluttertoast: b644586ef3b16f67fae9a1f8754cef6b2d6b634b
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   google_sign_in: 27e70a98b529f0b076d4b19f231b81da28b1750b
