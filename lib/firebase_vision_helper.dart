@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:chat_app/detector_painters.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:firebase_mlkit_language/firebase_mlkit_language.dart';
 
@@ -54,30 +53,5 @@ abstract class FirebaseVisionHelper {
         .languageTranslator(fromLanguage, SupportedLanguages.Spanish);
 
         return await languageTranslator.processText(text);
-  }
-
-  static Future<dynamic> detector(File file, Detector detector) async {
-    dynamic results;
-    switch (detector) {
-      case Detector.barcode:
-        results = await barcodeDetector(file);
-        break;
-      case Detector.face:
-        results = await faceDetector(file);
-        break;
-      case Detector.label:
-        results = await imageLabeler(file);
-        break;
-      case Detector.cloudLabel:
-        results = await cloudImageLabeler(file);
-        break;
-      case Detector.text:
-        results = await textDetector(file);
-        break;
-      default:
-        break;
-    }
-
-    return results;
   }
 }
