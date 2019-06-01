@@ -27,7 +27,7 @@ class MainPageState extends State<MainPage> {
 
   bool isLoading = false;
   List<Choice> choices = const <Choice>[
-    const Choice(title: 'Settings', icon: Icons.settings),
+    const Choice(title: 'Settings', icon: Icons.supervised_user_circle),
     const Choice(title: 'Log out', icon: Icons.exit_to_app),
   ];
 
@@ -159,23 +159,28 @@ class MainPageState extends State<MainPage> {
                     children: <Widget>[
                       Container(
                         child: Text(
-                          'Nickname: ${document['nickname']}',
-                          style: TextStyle(color: primaryColor),
+                          document['nickname'],
+                          style: TextStyle(
+                              color: themeColor,
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.w300),
                         ),
                         alignment: Alignment.centerLeft,
                         margin: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 5.0),
                       ),
-                      Container(
-                        child: Text(
-                          'About me: ${document['aboutMe'] ?? 'Not available'}',
-                          style: TextStyle(color: primaryColor),
-                        ),
-                        alignment: Alignment.centerLeft,
-                        margin: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
-                      )
-                    ],
+                      document['aboutMe'] != null
+                          ? Container(
+                              child: Text(
+                                document['aboutMe'],
+                                style: TextStyle(color: primaryColor),
+                              ),
+                              alignment: Alignment.centerLeft,
+                              margin: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
+                            )
+                          : null
+                    ].where((Object o) => o != null).toList(),
                   ),
-                  margin: EdgeInsets.only(left: 20.0),
+                  margin: EdgeInsets.only(left: 16.0),
                 ),
               ),
             ],
@@ -185,16 +190,17 @@ class MainPageState extends State<MainPage> {
                 context,
                 MaterialPageRoute(
                     builder: (context) => ChatPage(
+                          username: document['nickname'],
                           peerId: document.documentID,
                           peerAvatar: document['photoUrl'],
                         )));
           },
-          color: greyColor2,
-          padding: EdgeInsets.fromLTRB(25.0, 10.0, 25.0, 10.0),
+          color: Color(0xFFEEEEEE),
+          padding: EdgeInsets.all(16.0),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
         ),
-        margin: EdgeInsets.only(bottom: 10.0, left: 5.0, right: 5.0),
+        margin: EdgeInsets.only(bottom: 10.0),
       );
     }
   }
@@ -233,8 +239,8 @@ class MainPageState extends State<MainPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'MAIN',
-          style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
+          'Conversations',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w300),
         ),
         centerTitle: true,
         actions: <Widget>[

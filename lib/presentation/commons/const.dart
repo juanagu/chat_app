@@ -1,6 +1,7 @@
 import 'dart:ui';
 
-final themeColor = Color(0xfff5a623);
-final primaryColor = Color(0xff203152);
-final greyColor = Color(0xffaeaeae);
-final greyColor2 = Color(0xffE8E8E8);
+final themeColor = Color(0xFF075B9A);
+final iconColor = Color(0xFF075B9A);
+final primaryColor = Color(0xFF333333);
+final greyColor = Color(0xFF000000);
+final greyColor2 = Color(0xFF60C9F8);

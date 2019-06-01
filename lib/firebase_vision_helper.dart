@@ -44,14 +44,12 @@ abstract class FirebaseVisionHelper {
         await instance.languageIdentifier().processText(text);
     var fromLanguage = languages.first.languageCode.toString();
 
-    await instance.modelManager()
-        .downloadModel(fromLanguage);
-    await instance.modelManager()
-        .downloadModel(SupportedLanguages.Spanish);
+    await instance.modelManager().downloadModel(fromLanguage);
+    await instance.modelManager().downloadModel(SupportedLanguages.Spanish);
 
-    final languageTranslator =  instance
-        .languageTranslator(fromLanguage, SupportedLanguages.Spanish);
+    final languageTranslator =
+        instance.languageTranslator(fromLanguage, SupportedLanguages.Spanish);
 
-        return await languageTranslator.processText(text);
+    return await languageTranslator.processText(text);
   }
 }
