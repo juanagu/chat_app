@@ -1,0 +1,83 @@
+{
+  "project_info": {
+    "project_number": "94390138567",
+    "firebase_url": "https://flutter-test-8895b.firebaseio.com",
+    "project_id": "flutter-test-8895b",
+    "storage_bucket": "flutter-test-8895b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:94390138567:android:178081163bc92cf9",
+        "android_client_info": {
+          "package_name": "com.juanagu.fluttercleanarchitecture"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "94390138567-6lq58lnuqrmga0ecl4abob6s8a5uth7q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzePT58oh28J1Vhf9GyHyAobuMnT1FVLU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "94390138567-6lq58lnuqrmga0ecl4abob6s8a5uth7q.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "94390138567-m9g835v3a3ojhp0psn9bp1r57oem858v.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.juanagu.techTalkMlKit"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:94390138567:android:ac433190f823fe9f",
+        "android_client_info": {
+          "package_name": "com.juanagu.tech_talk_ml_kit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "94390138567-6lq58lnuqrmga0ecl4abob6s8a5uth7q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzePT58oh28J1Vhf9GyHyAobuMnT1FVLU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "94390138567-6lq58lnuqrmga0ecl4abob6s8a5uth7q.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "94390138567-m9g835v3a3ojhp0psn9bp1r57oem858v.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.juanagu.techTalkMlKit"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
