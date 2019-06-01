@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:tech_talk_ml_kit/detector_painters.dart';
+import 'package:chat_app/detector_painters.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:firebase_mlkit_language/firebase_mlkit_language.dart';
 
