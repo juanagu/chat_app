@@ -2,10 +2,14 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chat_app/domain/models/user_model.dart';
+import 'package:chat_app/domain/usecases/all_users_usecases/get_all_users_use_case.dart';
 import 'package:chat_app/presentation/app.dart';
 import 'package:chat_app/presentation/features/chat_module/chat_page.dart';
 import 'package:chat_app/presentation/features/settings_module/setting_page.dart';
+import 'package:chat_app/presentation/injection/modules/user_module/user_module.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dependencies/dependencies.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -24,6 +28,7 @@ class MainPageState extends State<MainPage> {
   MainPageState({Key key, @required this.currentUserId});
 
   final String currentUserId;
+  var injector = Injector.fromModule(module: UserModule());
 
   bool isLoading = false;
   List<Choice> choices = const <Choice>[
@@ -126,8 +131,8 @@ class MainPageState extends State<MainPage> {
     }
   }
 
-  Widget buildItem(BuildContext context, DocumentSnapshot document) {
-    if (document['id'] == currentUserId) {
+  Widget buildItem(BuildContext context, UserModel user) {
+    if (user.id == currentUserId) {
       return Container();
     } else {
       return Container(
@@ -145,7 +150,7 @@ class MainPageState extends State<MainPage> {
                         height: 50.0,
                         padding: EdgeInsets.all(15.0),
                       ),
-                  imageUrl: document['photoUrl'],
+                  imageUrl: user.photo,
                   width: 50.0,
                   height: 50.0,
                   fit: BoxFit.cover,
@@ -159,7 +164,7 @@ class MainPageState extends State<MainPage> {
                     children: <Widget>[
                       Container(
                         child: Text(
-                          document['nickname'],
+                          user.username,
                           style: TextStyle(
                               color: themeColor,
                               fontSize: 20.0,
@@ -168,10 +173,10 @@ class MainPageState extends State<MainPage> {
                         alignment: Alignment.centerLeft,
                         margin: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 5.0),
                       ),
-                      document['aboutMe'] != null
+                      user.aboutMe != null
                           ? Container(
                               child: Text(
-                                document['aboutMe'],
+                                user.aboutMe,
                                 style: TextStyle(color: primaryColor),
                               ),
                               alignment: Alignment.centerLeft,
@@ -190,9 +195,9 @@ class MainPageState extends State<MainPage> {
                 context,
                 MaterialPageRoute(
                     builder: (context) => ChatPage(
-                          username: document['nickname'],
-                          peerId: document.documentID,
-                          peerAvatar: document['photoUrl'],
+                          username: user.username,
+                          peerId: user.id,
+                          peerAvatar: user.photo,
                         )));
           },
           color: Color(0xFFEEEEEE),
@@ -276,7 +281,7 @@ class MainPageState extends State<MainPage> {
             // List
             Container(
               child: StreamBuilder(
-                stream: Firestore.instance.collection('users').snapshots(),
+                stream: injector.get<GetAllUsersUseCase>().perform(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return Center(
@@ -288,8 +293,8 @@ class MainPageState extends State<MainPage> {
                     return ListView.builder(
                       padding: EdgeInsets.all(10.0),
                       itemBuilder: (context, index) =>
-                          buildItem(context, snapshot.data.documents[index]),
-                      itemCount: snapshot.data.documents.length,
+                          buildItem(context, snapshot.data[index]),
+                      itemCount: snapshot.data.length,
                     );
                   }
                 },
