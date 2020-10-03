@@ -7,7 +7,7 @@ App Description: The main goal of the app is to allow people that speak differen
 
 
 Team: 
-[Ignacio Bado](https://www.linkedin.com/in/ignacio-bado/), [Rodrigo Garcia](https://www.linkedin.com/in/rodrigo-ezequiel-garcia/), [Juan Ignacio Agú](https://www.linkedin.com/in/juan-ignacio-ag%C3%BA-01079130/) (Me)
+[Ignacio Bado](https://www.linkedin.com/in/ignacio-bado/), [Rodrigo Garcia](https://www.linkedin.com/in/rodrigo-ezequiel-garcia/), [Denis Reinoso](https://github.com/dreinoso) and [Juan Ignacio Agú](https://www.linkedin.com/in/juan-ignacio-ag%C3%BA-01079130/) (Me)
 
 
 ![AppPresentation](https://media.giphy.com/media/7T5suK10MZM5Ob90zC/giphy.gif)
